@@ -1,21 +1,52 @@
 import React from "react"
-import { Link } from "gatsby"
-
+import { graphql } from 'gatsby'
 import Layout from "../components/layout"
-import Image from "../components/image"
 import SEO from "../components/seo"
 
-const IndexPage = () => (
-  <Layout>
-    <SEO title="Home" />
-    <h1>Hi people</h1>
-    <p>Welcome to your new Gatsby site.</p>
-    <p>Now go build something great.</p>
-    <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
-      <Image />
-    </div>
-    <Link to="/page-2/">Go to page 2</Link>
-  </Layout>
-)
+import HeroSection from '../components/HeroSection';
+import TeamSection from '../components/TeamSection';
+
+const IndexPage = ({ data }) => {
+
+  const sections = data.wordpress.page.sectionBlocks.sectionBlocks;
+  return(
+    <Layout>
+      <SEO title="Home" />
+      {
+        sections.map((section, i) => {
+          const typeName = section.__typename;
+          
+          switch(typeName) {
+            case 'WORDPRESS_Page_Sectionblocks_SectionBlocks_HeroSection':
+              return <HeroSection key={i} {...section} />
+            
+            case 'WORDPRESS_Page_Sectionblocks_SectionBlocks_CardsSection':
+              return <TeamSection key={i} {...section} />
+
+            default: 
+              return <h1>No Sections Found</h1>
+          }
+        })
+      }
+    </Layout>
+  )
+}
 
 export default IndexPage
+
+export const pageQuery = graphql`
+  {
+    wordpress {
+      page(idType: DATABASE_ID, id: "9") {
+        id
+        title
+        sectionBlocks {
+          sectionBlocks {
+            ...HeroSection
+            ...TeamSection
+          }
+        }
+      }
+    }
+  }
+`

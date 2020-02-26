@@ -7,6 +7,15 @@ module.exports = {
   plugins: [
     `gatsby-plugin-react-helmet`,
     {
+      resolve: 'gatsby-source-graphql',
+      options: {
+        typeName: "WORDPRESS",
+        fieldName: "wordpress",
+        url: "https://dev-visier-graphql.pantheonsite.io/graphql",
+        refetchInterval: 60,
+      },
+    },
+    {
       resolve: `gatsby-source-filesystem`,
       options: {
         name: `images`,
